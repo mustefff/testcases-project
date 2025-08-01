@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation    Tests CRUD pour la collection Categories de MongoDB
-Library          MongoDBBSONLibrary
 Library          Collections
 Library          BuiltIn
 Library          DateTime
@@ -288,8 +287,8 @@ TC_CAT_DELETE_03 - Suppression d'une catégorie inexistante
     ${non_existent_id}=    Set Variable    ${NON_EXISTENT_ID}
 
     # Tenter la suppression
-    ${status}=    Run Keyword And Return Status    Delete Category    ${non_existent_id}
-    Should Be Equal    ${status}    ${False}
+    ${count}=    Delete Category    ${non_existent_id}
+    Should Be Equal As Integers    ${count}    0
     Log    No category deleted as expected
 
 *** Keywords ***

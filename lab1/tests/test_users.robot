@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation    Tests CRUD pour la collection Users de MongoDB
-Library          MongoDBBSONLibrary
 Library          Collections
 Library          BuiltIn
 Library          DateTime
@@ -28,18 +27,15 @@ TC_USER_CREATE_01 - Création réussie d'un utilisateur
     ...    phone=1-555-555-5555
 
     # Insérer l'utilisateur
-    ${result}=    Create User    ${user_data}
-    Should Not Be Empty    ${result}
-    # Générer un ID pour les tests suivants
-    ${user_id}=    Get From Dictionary    ${user_data}    _id    ${TEST_USER_ID}
-    Set Suite Variable    ${CREATED_USER_ID}    ${user_id}
+    ${userId}=    Create User    ${user_data}
+    Should Not Be Empty    ${userId}
 
     # Vérifier que l'utilisateur existe
-    ${user}=    Get User By Id    ${user_id}
+    ${user}=    Get User By Id    ${userId}
     Should Not Be Empty    ${user}
     Should Be Equal    ${user}[email]    test.robot@example.com
     Should Be Equal    ${user}[username]    testrobot
-    Log    User created successfully with ID: ${user_id}
+    Log    User created successfully with ID: ${userId}
 
 TC_USER_CREATE_02 - Création d'un utilisateur avec email dupliqué
     [Documentation]    Vérifier que la création échoue avec un email existant
@@ -270,8 +266,9 @@ TC_USER_DELETE_03 - Suppression avec critère invalide
     [Tags]    delete    non-passing
     # Tenter une suppression avec un critère mal formé
     ${invalid_id}=    Set Variable    INVALID_ID_FORMAT
-    ${status}=    Run Keyword And Return Status    Delete User    ${invalid_id}
-    Should Be Equal    ${status}    ${False}
+    ${count}=    Delete User    ${invalid_id}
+    Should Be Equal As Integers    ${count}    0
+
     Log    Delete operation failed as expected with invalid criteria
 
 *** Keywords ***
