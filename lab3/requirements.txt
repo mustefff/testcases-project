@@ -1,0 +1,17 @@
+# Dépendances pour les tests d'API eBay avec Robot Framework
+
+# Robot Framework et ses bibliothèques
+robotframework==6.1.1
+robotframework-requests==0.9.4
+robotframework-jsonlibrary==0.5
+
+# Bibliothèques Python pour les requêtes HTTP et JSON
+requests==2.31.0
+jsonschema==4.19.2
+
+# Outils de développement et débogage
+robotframework-debuglibrary==2.3.0
+robotframework-pabot==2.16.0
+
+# Génération de rapports
+robotframework-metrics==3.4.0

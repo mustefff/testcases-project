@@ -1,0 +1,24 @@
+# Configuration Robot Framework pour les tests d'API eBay
+
+# Répertoires
+--outputdir results
+--log log.html
+--report report.html
+--output output.xml
+
+# Variables d'environnement
+--variable ENVIRONMENT:sandbox
+--variable LOG_LEVEL:INFO
+
+# Tags par défaut
+--exclude wip
+--exclude manual
+
+# Parallélisation (optionnel avec pabot)
+# --processes 2
+
+# Timeout global
+--timeout 60s
+
+# Niveau de log pour les mots-clés
+--loglevel INFO:INFO
