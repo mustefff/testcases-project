@@ -1,0 +1,13 @@
+@echo off
+echo Vérification de la connexion à l'appareil Android...
+adb devices
+echo.
+echo Vérification de l'état de l'application...
+adb shell pm list packages | findstr "sn.sonatel"
+echo.
+echo Redémarrage du serveur ADB...
+adb kill-server
+adb start-server
+echo.
+echo Vérification de la connexion après redémarrage...
+adb devices

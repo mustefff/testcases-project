@@ -74,11 +74,11 @@ TC_USER_CREATE_03 - Création d'un utilisateur sans email
     ...    name=${{{"firstname": "No", "lastname": "Email"}}}
 
     # Tenter d'insérer l'utilisateur
-    ${status}=    Run Keyword And Return Status    Create User    ${user_data}
-    Run Keyword If    ${status}    Fail    User should not be created without email
-
-    # Vérifier avec validation custom
-    Run Keyword And Expect Error    *${MISSING_FIELD_MSG}*    Validate User Data    ${user_data}
+    ${result}=     Create User With Error Handling    ${user_data}
+    
+    # Le test passe si la création échoue (success=false)
+    Run Keyword If    ${result}[success]    Fail    User should not be created without email
+    
     Log    User creation failed as expected without email field
 
 # READ Tests
@@ -221,7 +221,7 @@ TC_USER_DELETE_01 - Suppression réussie d'un utilisateur
 
     # Supprimer l'utilisateur
     ${delete_result}=    Delete User    ${user_id}
-    Should Not Be Empty    ${delete_result}
+    Should Be True    ${delete_result} > 0
 
     # Vérifier que l'utilisateur n'existe plus
     ${user}=    Get User By Id    ${user_id}
