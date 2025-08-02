@@ -64,6 +64,7 @@ Delete Product
     ${query}=    Create Dictionary    _id=${product_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Remove MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_query}
+    Log To Console    Product with ID ${result} deleted successfully
     RETURN    ${result}
 
 # User Keywords
@@ -73,6 +74,20 @@ Create User
     ${json_data}=    Convert To Json String    ${user_data}
     ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_data}
     RETURN    ${result}
+
+Create User With Error Handling
+    [Documentation]    Creates a new user in the users collection
+    [Arguments]    ${user_data}
+    ${json_data}=    Convert To Json String    ${user_data}
+    TRY
+        ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_data}
+        &{success_result}=    Create Dictionary    success=${True}    result=${result}
+        RETURN    ${success_result}
+    EXCEPT
+        Log    Error occurred while saving user to MongoDB
+        &{error_result}=    Create Dictionary    success=${False}
+        RETURN    ${error_result}
+    END
 
 Get User By Id
     [Documentation]    Retrieves a user by ObjectId
