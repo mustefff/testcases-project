@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation    Tests CRUD pour la collection Products de MongoDB
-Library          MongoDBBSONLibrary
 Library          Collections
 Library          BuiltIn
 Library          String

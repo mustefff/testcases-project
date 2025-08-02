@@ -1,5 +1,5 @@
 *** Settings ***
-Library    MongoDBLibrary
+Library    ../library/CustomMongoDBLibrary.py
 Library    Collections
 Library    DateTime
 Library    String
@@ -9,12 +9,14 @@ Resource   mongodb_variables.robot
 *** Keywords ***
 # Connection Keywords
 Connect To MongoDB Atlas
-    [Documentation]    Connects to MongoDB Atlas using the MongoDBBSONLibrary
-    Connect To MongoDB    ${MONGODB_URI}    ${27017}    10    None
+    [Documentation]    Connects to MongoDB Atlas using the CustomMongoDBLibrary
+    Connect To MongoDB    ${MONGODB_URI}    ${27017}    ${CONNECT_TIMEOUT}    None
+    Log    Connected to MongoDB Atlas successfully
 
 Disconnect From MongoDB Atlas
     [Documentation]    Disconnects from MongoDB Atlas
     Disconnect From MongoDB
+    Log    Disconnected from MongoDB Atlas
 
 # Product Keywords
 Create Product
@@ -22,7 +24,7 @@ Create Product
     [Arguments]    ${product_data}
     ${json_data}=    Convert To Json String    ${product_data}
     ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_data}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Get Product By Id
     [Documentation]    Retrieves a product by its ObjectId
@@ -31,7 +33,7 @@ Get Product By Id
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_query}    True
     ${product}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${product}
+    RETURN    ${product}
 
 Get Product By Title
     [Documentation]    Retrieves a product by its title
@@ -40,12 +42,12 @@ Get Product By Title
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_query}    True
     ${product}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${product}
+    RETURN    ${product}
 
 Get All Products
     [Documentation]    Retrieves all products
     ${result}=    Retrieve All MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    True
-    [Return]    ${result}
+    RETURN    ${result}
 
 Update Product
     [Documentation]    Updates a product document
@@ -54,7 +56,7 @@ Update Product
     ${json_query}=    Convert To Json String    ${query}
     ${json_update}=    Create Update Document    ${update_data}
     ${result}=    Retrieve And Update One MongoDB Record    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_query}    ${json_update}    False
-    [Return]    ${result}
+    RETURN    ${result}
 
 Delete Product
     [Documentation]    Deletes a product by its ObjectId
@@ -62,7 +64,7 @@ Delete Product
     ${query}=    Create Dictionary    _id=${product_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Remove MongoDB Records    ${DATABASE_NAME}    ${PRODUCTS_COLLECTION}    ${json_query}
-    [Return]    ${result}
+    RETURN    ${result}
 
 # User Keywords
 Create User
@@ -70,7 +72,7 @@ Create User
     [Arguments]    ${user_data}
     ${json_data}=    Convert To Json String    ${user_data}
     ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_data}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Get User By Id
     [Documentation]    Retrieves a user by ObjectId
@@ -79,7 +81,7 @@ Get User By Id
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_query}    True
     ${user}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${user}
+    RETURN    ${user}
 
 Get User By Username
     [Documentation]    Retrieves a user by username
@@ -88,7 +90,7 @@ Get User By Username
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_query}    True
     ${user}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${user}
+    RETURN    ${user}
 
 Get User By Email
     [Documentation]    Retrieves a user by email
@@ -97,7 +99,7 @@ Get User By Email
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_query}    True
     ${user}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${user}
+    RETURN    ${user}
 
 Update User
     [Documentation]    Updates a user document
@@ -106,7 +108,7 @@ Update User
     ${json_query}=    Convert To Json String    ${query}
     ${json_update}=    Create Update Document    ${update_data}
     ${result}=    Retrieve And Update One MongoDB Record    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_query}    ${json_update}    False
-    [Return]    ${result}
+    RETURN    ${result}
 
 Delete User
     [Documentation]    Deletes a user by ObjectId
@@ -114,7 +116,8 @@ Delete User
     ${query}=    Create Dictionary    _id=${user_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Remove MongoDB Records    ${DATABASE_NAME}    ${USERS_COLLECTION}    ${json_query}
-    [Return]    ${result}
+    Log To Console    User with ID ${user_id} deleted successfully
+    RETURN    ${result['deleted_count']}
 
 # Cart Keywords
 Get Carts By User Id
@@ -123,14 +126,14 @@ Get Carts By User Id
     ${query}=    Create Dictionary    userId=${user_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${CARTS_COLLECTION}    ${json_query}    True
-    [Return]    ${result}
+    RETURN    ${result}
 
 Create Cart
     [Documentation]    Creates a new cart
     [Arguments]    ${cart_data}
     ${json_data}=    Convert To Json String    ${cart_data}
     ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${CARTS_COLLECTION}    ${json_data}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Get Cart By Id
     [Documentation]    Retrieves a cart by ObjectId
@@ -139,12 +142,12 @@ Get Cart By Id
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${CARTS_COLLECTION}    ${json_query}    True
     ${cart}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${cart}
+    RETURN    ${cart}
 
 Get All Carts
     [Documentation]    Retrieves all carts
     ${result}=    Retrieve All MongoDB Records    ${DATABASE_NAME}    ${CARTS_COLLECTION}    True
-    [Return]    ${result}
+    RETURN    ${result}
 
 Update Cart
     [Documentation]    Updates a cart document
@@ -153,7 +156,7 @@ Update Cart
     ${json_query}=    Convert To Json String    ${query}
     ${json_update}=    Create Update Document    ${update_data}
     ${result}=    Retrieve And Update One MongoDB Record    ${DATABASE_NAME}    ${CARTS_COLLECTION}    ${json_query}    ${json_update}    False
-    [Return]    ${result}
+    RETURN    ${result}
 
 Add Product To Cart
     [Documentation]    Adds a product to an existing cart
@@ -163,7 +166,7 @@ Add Product To Cart
     Append To List    ${products}    ${product_data}
     &{update_data}=    Create Dictionary    products=${products}
     ${result}=    Update Cart    ${cart_id}    ${update_data}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Delete Cart
     [Documentation]    Deletes a cart by ObjectId
@@ -171,7 +174,7 @@ Delete Cart
     ${query}=    Create Dictionary    _id=${cart_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Remove MongoDB Records    ${DATABASE_NAME}    ${CARTS_COLLECTION}    ${json_query}
-    [Return]    ${result}
+    RETURN    ${result}
 
 # Category Keywords
 Create Category
@@ -179,7 +182,7 @@ Create Category
     [Arguments]    ${category_data}
     ${json_data}=    Convert To Json String    ${category_data}
     ${result}=    Save MongoDB Records    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    ${json_data}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Get Category By Id
     [Documentation]    Retrieves a category by ObjectId
@@ -188,7 +191,7 @@ Get Category By Id
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    ${json_query}    True
     ${category}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${category}
+    RETURN    ${category}
 
 Get Category By Name
     [Documentation]    Retrieves a category by name
@@ -197,12 +200,12 @@ Get Category By Name
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Retrieve Some MongoDB Records    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    ${json_query}    True
     ${category}=    Run Keyword If    ${result}    Get From List    ${result}    0    ELSE    Set Variable    ${EMPTY}
-    [Return]    ${category}
+    RETURN    ${category}
 
 Get All Categories
     [Documentation]    Retrieves all categories
     ${result}=    Retrieve All MongoDB Records    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    True
-    [Return]    ${result}
+    RETURN    ${result}
 
 Update Category
     [Documentation]    Updates a category document
@@ -211,7 +214,7 @@ Update Category
     ${json_query}=    Convert To Json String    ${query}
     ${json_update}=    Create Update Document    ${update_data}
     ${result}=    Retrieve And Update One MongoDB Record    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    ${json_query}    ${json_update}    False
-    [Return]    ${result}
+    RETURN    ${result}
 
 Delete Category
     [Documentation]    Deletes a category by ObjectId
@@ -219,7 +222,7 @@ Delete Category
     ${query}=    Create Dictionary    _id=${category_id}
     ${json_query}=    Convert To Json String    ${query}
     ${result}=    Remove MongoDB Records    ${DATABASE_NAME}    ${CATEGORIES_COLLECTION}    ${json_query}
-    [Return]    ${result}
+    RETURN    ${result['deleted_count']}
 
 # Validation Keywords
 Validate Product Data
@@ -259,20 +262,20 @@ Convert To Json String
     [Documentation]    Converts a dictionary to JSON string
     [Arguments]    ${dict}
     ${json_string}=    Evaluate    json.dumps(${dict})    json
-    [Return]    ${json_string}
+    RETURN    ${json_string}
 
 Create Update Document
     [Documentation]    Creates an update document with $set operator
     [Arguments]    ${update_data}
     ${update_doc}=    Create Dictionary    $set=${update_data}
     ${json_string}=    Convert To Json String    ${update_doc}
-    [Return]    ${json_string}
+    RETURN    ${json_string}
 
 Parse Json Result
     [Documentation]    Parses JSON result from MongoDB operation
     [Arguments]    ${json_result}
     ${result}=    Evaluate    json.loads('''${json_result}''')    json
-    [Return]    ${result}
+    RETURN    ${result}
 
 # Utility Keywords
 Should Contain Key
@@ -297,13 +300,13 @@ Generate Test Email
     [Documentation]    Generates a unique test email
     ${timestamp}=    Get Current Date    result_format=epoch
     ${email}=    Set Variable    test.${timestamp}@example.com
-    [Return]    ${email}
+    RETURN    ${email}
 
 Generate Test Username
     [Documentation]    Generates a unique test username
     ${timestamp}=    Get Current Date    result_format=epoch
     ${username}=    Set Variable    testuser${timestamp}
-    [Return]    ${username}
+    RETURN    ${username}
 
 Create Test Product Data
     [Documentation]    Creates test product data with optional overrides
@@ -318,7 +321,7 @@ Create Test Product Data
     FOR    ${key}    ${value}    IN    &{overrides}
         Set To Dictionary    ${product}    ${key}=${value}
     END
-    [Return]    ${product}
+    RETURN    ${product}
 
 Create Test User Data
     [Documentation]    Creates test user data with optional overrides
@@ -335,14 +338,14 @@ Create Test User Data
     FOR    ${key}    ${value}    IN    &{overrides}
         Set To Dictionary    ${user}    ${key}=${value}
     END
-    [Return]    ${user}
+    RETURN    ${user}
 
 Create Test Cart Data
     [Documentation]    Creates test cart data
     [Arguments]    ${user_id}    @{products}
     ${current_date}=    Get Current Date    result_format=%Y-%m-%d
     &{cart}=    Create Dictionary    userId=${user_id}    date=${current_date}    products=@{products}
-    [Return]    ${cart}
+    RETURN    ${cart}
 
 Create Test Category Data
     [Documentation]    Creates test category data
@@ -354,7 +357,7 @@ Create Test Category Data
     FOR    ${key}    ${value}    IN    &{overrides}
         Set To Dictionary    ${category}    ${key}=${value}
     END
-    [Return]    ${category}
+    RETURN    ${category}
 
 Verify Product Exists
     [Documentation]    Verifies that a product exists in the collection

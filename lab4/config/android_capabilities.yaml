@@ -1,0 +1,87 @@
+# Configuration des capacités Appium pour Android
+# Tests de l'application Looma
+
+# Capacités de base Android
+android_standard:
+  platformName: "Android"
+  platformVersion: "11.0"  # Ajuster selon votre émulateur/appareil
+  deviceName: "Android Emulator"
+  automationName: "UiAutomator2"
+  app: "./looma.apk"  # Chemin vers l'APK
+  appPackage: "com.looma.app"  # Package de l'app (à adapter)
+  appActivity: "com.looma.MainActivity"  # Activité principale (à adapter)
+
+  # Paramètres d'optimisation
+  noReset: false
+  fullReset: false
+  newCommandTimeout: 300
+  implicitWaitTimeout: 10000
+
+  # Paramètres de capture d'écran
+  enableScreenshots: true
+  screenshotOnFailure: true
+
+  # Paramètres de localisation
+  locale: "fr"
+  language: "fr"
+
+  # Paramètres réseau
+  networkSpeed: "full"
+
+# Capacités pour Flutter (bonus points)
+android_flutter:
+  platformName: "Android"
+  platformVersion: "11.0"
+  deviceName: "Android Emulator"
+  automationName: "Flutter"
+  app: "./looma.apk"
+
+  # Capacités spécifiques Flutter
+  flutterSystemPort: 9999
+  flutterServerLaunchTimeout: 300000
+
+  # Autres paramètres
+  noReset: false
+  fullReset: false
+  newCommandTimeout: 300
+  implicitWaitTimeout: 10000
+  enableScreenshots: true
+  screenshotOnFailure: true
+
+# Configuration pour appareil réel
+android_real_device:
+  platformName: "Android"
+  platformVersion: "11.0"  # Version de votre appareil
+  deviceName: "Real Device"
+  udid: "your_device_udid"  # UDID de votre appareil
+  automationName: "UiAutomator2"
+  app: "./looma.apk"
+
+  # Paramètres spécifiques appareil réel
+  noReset: false
+  fullReset: false
+  newCommandTimeout: 300
+  implicitWaitTimeout: 10000
+
+# Serveur Appium
+appium_server:
+  host: "127.0.0.1"
+  port: 4723
+
+# Timeouts globaux
+timeouts:
+  implicit_wait: 10
+  explicit_wait: 30
+  page_load_timeout: 60
+
+# Stratégies de localisation (éviter xpath pour bonus)
+locator_strategies:
+  preferred:
+    - "accessibility id"
+    - "id"
+    - "class name"
+    - "android uiautomator"
+    - "text"
+    - "partial text"
+  avoid:
+    - "xpath"  # Éviter pour obtenir les points bonus
