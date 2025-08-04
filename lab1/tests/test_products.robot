@@ -218,8 +218,8 @@ TC_PROD_DELETE_02 - Suppression d'un produit inexistant
     ${non_existent_id}=    Set Variable    ${NON_EXISTENT_ID}
 
     # Tenter la suppression
-    ${status}=    Run Keyword And Return Status    Delete Product    ${non_existent_id}
-    Should Be Equal    ${status}    ${False}
+    ${result}=    Delete Product    ${non_existent_id}
+    Should Be Equal As Numbers    ${result}[deleted_count]    0
     Log    No document deleted as expected
 
 TC_PROD_DELETE_03 - Suppression avec un ID invalide
@@ -229,8 +229,8 @@ TC_PROD_DELETE_03 - Suppression avec un ID invalide
     ${invalid_id}=    Set Variable    ${INVALID_OBJECT_ID}
 
     # Tenter la suppression
-    ${status}=    Run Keyword And Return Status    Delete Product    ${invalid_id}
-    Should Be Equal    ${status}    ${False}
+    ${result}=    Delete Product    ${invalid_id}
+    Should Be Equal As Numbers    ${result}[deleted_count]    0
     Log    Delete operation failed as expected with invalid ID format
 
 *** Keywords ***
